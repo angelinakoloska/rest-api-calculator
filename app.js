@@ -11,6 +11,8 @@ var addRouter = require('./routes/add');
 var subtractRouter = require('./routes/subtract');
 var multiplyRouter = require('./routes/multiply');
 var divideRouter = require('./routes/divide');
+var db = require("./models");
+db.sequelize.sync({ force: false })
 
 var app = express();
 
