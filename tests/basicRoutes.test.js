@@ -98,4 +98,27 @@ describe("testing-guest-routes", () => {
             }
           });
       });
+
+      test("GET /sqrt/2 - success", async () => {
+        const { body } = await request(app).get("/sqrt/2");
+        expect(body).toEqual({
+            "status": "success",
+            "data": {
+                "result": 1,
+                "message": "Result has been rounded, as it was not an integer."
+            }
+        });
+    });
+    
+    test("GET /sqrt/-2 - fail", async () => {
+        const { body } = await request(app).get("/sqrt/-2");
+        expect(body).toEqual({
+            "status": "fail",
+            "data": {
+                "number1": "number1 cannot be negative"
+            }
+        });
+    });
+    
 })
+
