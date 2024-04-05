@@ -33,7 +33,7 @@ router.post("/login", jsonParser, async (req, res, next) => {
           token = jwt.sign(
             { id: data.id, email: data.Email },
             process.env.TOKEN_SECRET,
-            { expiresIn: "20s" }
+            { expiresIn: "1h" }
           );
         } catch (err) {
           res.jsend.error("Something went wrong with creating JWT token")
