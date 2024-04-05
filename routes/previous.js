@@ -7,6 +7,7 @@ var resultService = new ResultService(db);
 var jwt = require('jsonwebtoken')
 
 router.use(jsend.middleware);
+
 router.get('/add/:number1', async function(req, res, next) {
     const number1 = parseInt(req.params.number1);
     if(isNaN(number1)) {
@@ -19,15 +20,14 @@ router.get('/add/:number1', async function(req, res, next) {
     let decodedToken;
     try {
         decodedToken = jwt.verify(token, process.env.TOKEN_SECRET );
-    }
-    catch(err) {
+    } catch(err) {
         return res.jsend.fail({"result": err});
     }
     const previous = await resultService.getOne(decodedToken.id);
     const result = previous.Value + number1;
     resultService.create("add", result, decodedToken.id);
     if( result % decodedToken.email.length )
-    res.jsend.success({"result": result, "previousOperation": previous.OperationName, "previousValue": previous.Value});
+        res.jsend.success({"result": result, "previousOperation": previous.OperationName, "previousValue": previous.Value});
 });
 
 router.get('/subtract/:number1', async function(req, res, next) {
@@ -42,8 +42,7 @@ router.get('/subtract/:number1', async function(req, res, next) {
     let decodedToken;
     try {
         decodedToken = jwt.verify(token, process.env.TOKEN_SECRET );
-    }
-    catch(err) {
+    } catch(err) {
         return res.jsend.fail({"result": err});
     }
     const previous = await resultService.getOne(decodedToken.id);
@@ -64,8 +63,7 @@ router.get('/multiply/:number1', async function(req, res, next) {
     let decodedToken;
     try {
         decodedToken = jwt.verify(token, process.env.TOKEN_SECRET );
-    }
-    catch(err) {
+    } catch(err) {
         return res.jsend.fail({"result": err});
     }
     const previous = await resultService.getOne(decodedToken.id);
@@ -89,8 +87,7 @@ router.get('/divide/:number1', async function(req, res, next) {
     let decodedToken;
     try {
         decodedToken = jwt.verify(token, process.env.TOKEN_SECRET );
-    }
-    catch(err) {
+    } catch(err) {
         return res.jsend.fail({"result": err});
     }
     const previous = await resultService.getOne(decodedToken.id);
@@ -98,10 +95,33 @@ router.get('/divide/:number1', async function(req, res, next) {
     resultService.create("divide", Math.round(result), decodedToken.id);
     if (Number.isInteger(result)) {
         res.jsend.success({"result": result, "previousOperation": previous.OperationName, "previousValue": previous.Value});
-    }
-    else {
+    } else {
         res.jsend.success({"result": Math.round(result), "previousOperation": previous.OperationName, "previousValue": previous.Value, "message": "Result has been rounded, as it was not an integer."});
     }
 });
 
-module.exports = router;
+router.get('/sqrt', async function(req, res, next) {
+    const token = req.headers.authorization?.split(' ')[1];
+    if(!token) {
+        return res.jsend.fail({"result": "JWT token not provided"});
+    }
+    let decodedToken;
+    try {
+        decodedToken = jwt.verify(token, process.env.TOKEN_SECRET );
+    } catch(err) {
+        return res.jsend.fail({"result": err});
+    }
+    const previous = await resultService.getOne(decodedToken.id);
+    if(previous.Value < 0) {
+        return res.jsend.fail({"previousValue": "previous value is negative"});
+    }
+    const result = Math.sqrt(previous.Value);
+    resultService.create("sqrt", Math.round(result), decodedToken.id);
+    if (Number.isInteger(result)) {
+        res.jsend.success({"result": result, "previousOperation": previous.OperationName, "previousValue": previous.Value});
+    } else {
+        res.jsend.success({"result": Math.round(result), "previousOperation": previous.OperationName, "previousValue": previous.Value, "message": "Result has been rounded, as it was not an integer."});
+    }
+});
+
+module.exports = router; 

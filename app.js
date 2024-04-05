@@ -13,6 +13,7 @@ var addRouter = require('./routes/add');
 var subtractRouter = require('./routes/subtract');
 var multiplyRouter = require('./routes/multiply');
 var divideRouter = require('./routes/divide');
+var sqrtRouter = require('./routes/sqrt');
 var previousRouter = require('./routes/previous');
 var db = require("./models");
 db.sequelize.sync({ force: false })
@@ -40,6 +41,7 @@ app.use('/subtract', subtractRouter);
 app.use('/multiply', multiplyRouter);
 app.use('/divide', divideRouter);
 app.use('/previous', previousRouter);
+app.use('/sqrt', sqrtRouter);
 
 
 // catch 404 and forward to error handler
