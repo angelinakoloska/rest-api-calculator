@@ -18,6 +18,15 @@ class UserService {
             Salt: salt
         })
     }
+
+    async delete(email) {
+        return this.User.destroy({
+          where: {
+            Email: email
+          }
+        });
+      }
+      
 }
 
 module.exports = UserService;

@@ -66,4 +66,22 @@ router.post("/signup", async (req, res, next) => {
   });
 });
 
+router.delete('/', jsonParser, async function(req, res, next) {
+  let email = req.body.Email;
+
+  if (email == null) {
+    return res.jsend.fail({"email": "Email is required."});
+  }
+
+  var user = await userService.getOne(email);
+
+  if (user == null) {
+    return res.jsend.fail({"email": "No such user in the database"});
+  }
+
+  await userService.delete(email);
+  res.jsend.success({"result": "You deleted an account."});
+});
+
+
 module.exports = router;
