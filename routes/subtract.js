@@ -19,10 +19,15 @@ router.get('/:number1/:number2', function(req, res, next) {
     const result = number1 - number2;
     const token = req.headers.authorization?.split(' ')[1];
     if(token) {
-        const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET );
-        resultService.create("subtract", result, decodedToken.id);
+        try {
+            const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET );
+            resultService.create("subtract", result, decodedToken.id);
+        }
+        catch(err) {
+            res.jsend.success({"result": result, "message": err});
+        }
     }
-    res.jsend.success(result);
+    res.jsend.success({"result": result});
 });
 
 module.exports = router;

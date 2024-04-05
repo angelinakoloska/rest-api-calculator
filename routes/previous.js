@@ -16,13 +16,17 @@ router.get('/add/:number1', async function(req, res, next) {
     if(!token) {
         return res.jsend.fail({"result": "JWT token not provided"});
     }
-    const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET );
-    if (decodedToken == null) {
-        return res.jsend.fail({"result": "JWT token is invalid"});
+    let decodedToken;
+    try {
+        decodedToken = jwt.verify(token, process.env.TOKEN_SECRET );
+    }
+    catch(err) {
+        return res.jsend.fail({"result": err});
     }
     const previous = await resultService.getOne(decodedToken.id);
     const result = previous.Value + number1;
     resultService.create("add", result, decodedToken.id);
+    if( result % decodedToken.email.length )
     res.jsend.success({"result": result, "previousOperation": previous.OperationName, "previousValue": previous.Value});
 });
 
@@ -35,9 +39,12 @@ router.get('/subtract/:number1', async function(req, res, next) {
     if(!token) {
         return res.jsend.fail({"result": "JWT token not provided"});
     }
-    const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET );
-    if (decodedToken == null) {
-        return res.jsend.fail({"result": "JWT token is invalid"});
+    let decodedToken;
+    try {
+        decodedToken = jwt.verify(token, process.env.TOKEN_SECRET );
+    }
+    catch(err) {
+        return res.jsend.fail({"result": err});
     }
     const previous = await resultService.getOne(decodedToken.id);
     const result = previous.Value - number1;
@@ -54,9 +61,12 @@ router.get('/multiply/:number1', async function(req, res, next) {
     if(!token) {
         return res.jsend.fail({"result": "JWT token not provided"});
     }
-    const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET );
-    if (decodedToken == null) {
-        return res.jsend.fail({"result": "JWT token is invalid"});
+    let decodedToken;
+    try {
+        decodedToken = jwt.verify(token, process.env.TOKEN_SECRET );
+    }
+    catch(err) {
+        return res.jsend.fail({"result": err});
     }
     const previous = await resultService.getOne(decodedToken.id);
     const result = previous.Value * number1;
@@ -76,9 +86,12 @@ router.get('/divide/:number1', async function(req, res, next) {
     if(!token) {
         return res.jsend.fail({"result": "JWT token not provided"});
     }
-    const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET );
-    if (decodedToken == null) {
-        return res.jsend.fail({"result": "JWT token is invalid"});
+    let decodedToken;
+    try {
+        decodedToken = jwt.verify(token, process.env.TOKEN_SECRET );
+    }
+    catch(err) {
+        return res.jsend.fail({"result": err});
     }
     const previous = await resultService.getOne(decodedToken.id);
     const result = previous.Value / number1;

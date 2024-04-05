@@ -1,5 +1,6 @@
 var express = require('express');
 const jsend = require('jsend');
+const jwt = require('jsonwebtoken'); // Require jsonwebtoken module
 var router = express.Router();
 
 router.use(jsend.middleware);
@@ -20,10 +21,29 @@ router.get('/:number1/:number2', function (req, res, next) {
     }
         
     const result = number1 / number2;
-    if (Number.isInteger(result)) {
-        res.jsend.success({"result": result});
-    } else {
-        res.jsend.success({"result": Math.round(result), "message": "Result has been rounded, as it was not an integer."});
+    const token = req.headers.authorization?.split(' ')[1];
+    if(!token) { // Handle case where there is no token provided
+        return res.jsend.fail({"message": "Authorization token is missing."});
+    }
+    try {
+        const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
+        if (decodedToken && decodedToken.id) { // Ensure decodedToken exists and has id
+            resultService.create("divide", Math.round(result), decodedToken.id);
+        } else {
+            throw new Error("Invalid token");
+        }
+        if (Number.isInteger(result)) {
+            res.jsend.success({"result": result});
+        } else {
+            res.jsend.success({"result": Math.round(result), "message": "Result has been rounded, as it was not an integer."});
+        }
+    } catch(err) {
+        // Handle token verification errors
+        if (Number.isInteger(result)) {
+            res.jsend.fail({"result": result, "error": err});
+        } else {
+            res.jsend.fail({"result": Math.round(result), "error": err, "message": "Result has been rounded, as it was not an integer."});
+        }
     }
 });
 
