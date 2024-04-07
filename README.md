@@ -1,6 +1,7 @@
 # Calculator API
 
 ## Description
+A Calculator API that does have functionalities, such as add, subtract, multiply, divide.
 
 ## Technologies
 
